@@ -1,0 +1,27 @@
+﻿<Project>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\Keys\Longbow.Utility.snk</AssemblyOriginatorKeyFile>
+    <Copyright>Longbow</Copyright>
+    <Authors>Argo Zhang(argo@163.com)</Authors>
+    <Company>Longbow</Company>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Copyright>Longbow</Copyright>
+    <PackageProjectUrl>https://gitee.com/LongbowEnterprise/PetaPoco</PackageProjectUrl>
+    <PackageLicenseUrl>https://gitee.com/LongbowEnterprise/PetaPoco/blob/master/LICENSE.txt</PackageLicenseUrl>
+    <RepositoryUrl>https://gitee.com/LongbowEnterprise/PetaPoco</RepositoryUrl>
+    <PackageIconUrl>https://gitee.com/LongbowEnterprise/PetaPoco/raw/master/Media/Logo2/PetaPocoLogo2Nuget.png</PackageIconUrl>
+    <PackageId>PetaPoco.Compiled.Extensions</PackageId>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\Keys\Longbow.Utility.snk" Link="Longbow.Utility.snk" />
+  </ItemGroup>
+
+</Project>
