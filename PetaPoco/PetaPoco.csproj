@@ -4,17 +4,20 @@
     <TargetFrameworks>net40;net45;netstandard2.0</TargetFrameworks>
     <AssemblyTitle>PetaPoco</AssemblyTitle>
     <Description>A Tiny ORMish thing for your POCO's.</Description>
-    <Company>Collaborating Platypus</Company>
-    <Product>PetaPoco</Product>
-    <Copyright>Collaborating Platypus</Copyright>
-    <PackageProjectUrl>https://github.com/CollaboratingPlatypus/PetaPoco</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/CollaboratingPlatypus/PetaPoco/blob/master/LICENSE.txt</PackageLicenseUrl>
-    <RepositoryUrl>https://github.com/CollaboratingPlatypus/PetaPoco</RepositoryUrl>
+    <Company>Longbow</Company>
+    <Product>Longbow.PetaPoco</Product>
+    <Copyright>Longbow</Copyright>
+    <PackageProjectUrl>https://gitee.com/LongbowEnterprise/PetaPoco</PackageProjectUrl>
+    <PackageLicenseUrl>https://gitee.com/LongbowEnterprise/PetaPoco/blob/master/LICENSE.txt</PackageLicenseUrl>
+    <RepositoryUrl>https://gitee.com/LongbowEnterprise/PetaPoco</RepositoryUrl>
     <PackageTags>Peta Poco Peta-Poco PetaPoco ORM-Micro Micro-ORM ORM ormmicro MVC MVC4 MVC5 MVC6 MySql Postgres MSSQL Database DAL SQL Easy</PackageTags>
-    <PackageIconUrl>https://raw.githubusercontent.com/CollaboratingPlatypus/PetaPoco/master/Media/Logo2/PetaPocoLogo2Nuget.png</PackageIconUrl>
+    <PackageIconUrl>https://gitee.com/LongbowEnterprise/PetaPoco/master/Media/Logo2/PetaPocoLogo2Nuget.png</PackageIconUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageId>PetaPoco.Compiled</PackageId>
+    <PackageId>Longbow.PetaPoco</PackageId>
     <DefineConstants Condition="'$(TargetFramework)' != 'net40'">ASYNC</DefineConstants>
+    <Version>1.0.1</Version>
+    <RepositoryType>Git</RepositoryType>
+    <PackageReleaseNotes />
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' != 'netstandard2.0'">
