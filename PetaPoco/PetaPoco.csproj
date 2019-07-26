@@ -8,7 +8,7 @@
     <Product>Longbow.PetaPoco</Product>
     <Copyright>Longbow</Copyright>
     <PackageProjectUrl>https://gitee.com/LongbowEnterprise/PetaPoco</PackageProjectUrl>
-    <PackageLicenseUrl>https://gitee.com/LongbowEnterprise/PetaPoco/blob/master/LICENSE.txt</PackageLicenseUrl>
+    <PackageLicense>https://gitee.com/LongbowEnterprise/PetaPoco/blob/master/LICENSE.txt</PackageLicense>
     <RepositoryUrl>https://gitee.com/LongbowEnterprise/PetaPoco</RepositoryUrl>
     <PackageTags>Peta Poco Peta-Poco PetaPoco ORM-Micro Micro-ORM ORM ormmicro MVC MVC4 MVC5 MVC6 MySql Postgres MSSQL Database DAL SQL Easy</PackageTags>
     <PackageIconUrl>https://gitee.com/LongbowEnterprise/PetaPoco/master/Media/Logo2/PetaPocoLogo2Nuget.png</PackageIconUrl>

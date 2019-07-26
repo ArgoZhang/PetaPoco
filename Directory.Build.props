@@ -10,7 +10,7 @@
   <PropertyGroup>
     <Copyright>Longbow</Copyright>
     <PackageProjectUrl>https://gitee.com/LongbowEnterprise/PetaPoco</PackageProjectUrl>
-    <PackageLicenseUrl>https://gitee.com/LongbowEnterprise/PetaPoco/blob/master/LICENSE.txt</PackageLicenseUrl>
+    <PackageLicense>https://gitee.com/LongbowEnterprise/PetaPoco/blob/master/LICENSE.txt</PackageLicense>
     <RepositoryUrl>https://gitee.com/LongbowEnterprise/PetaPoco</RepositoryUrl>
     <PackageIconUrl>https://gitee.com/LongbowEnterprise/PetaPoco/raw/master/Media/Logo2/PetaPocoLogo2Nuget.png</PackageIconUrl>
     <PackageId>PetaPoco.Compiled.Extensions</PackageId>
