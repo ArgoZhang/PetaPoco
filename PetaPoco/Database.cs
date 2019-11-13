@@ -607,9 +607,18 @@ namespace PetaPoco
                 }
                 else if (t == typeof(AnsiString))
                 {
+                    var asValue = (value as AnsiString).Value;
+                    if (asValue == null)
+                    {
+                        p.Size = 0;
+                        p.Value = DBNull.Value;
+                    }
+                    else
+                    {
+                        p.Size = Math.Max(asValue.Length + 1, 4000);
+                        p.Value = asValue;
+                    }
                     // Thanks @DataChomp for pointing out the SQL Server indexing performance hit of using wrong string type on varchar
-                    p.Size = Math.Max((value as AnsiString).Value.Length + 1, 4000);
-                    p.Value = (value as AnsiString).Value;
                     p.DbType = DbType.AnsiString;
                 }
                 else if (value.GetType().Name == "SqlGeography") //SqlGeography is a CLR Type
@@ -1969,24 +1978,13 @@ namespace PetaPoco
 
 #endif
 
-#endregion
+        #endregion
 
-#region operation: Update
+        #region operation: Update
 
         /// <inheritdoc />
         public int Update(string tableName, string primaryKeyName, object poco, object primaryKeyValue)
-        {
-            if (string.IsNullOrEmpty(tableName))
-                throw new ArgumentNullException(nameof(tableName));
-
-            if (string.IsNullOrEmpty(primaryKeyName))
-                throw new ArgumentNullException(nameof(primaryKeyName));
-
-            if (poco == null)
-                throw new ArgumentNullException(nameof(poco));
-
-            return ExecuteUpdate(tableName, primaryKeyName, poco, primaryKeyValue, null);
-        }
+            => Update(tableName, primaryKeyName, poco, primaryKeyValue, null);
 
         /// <inheritdoc />
         public int Update(string tableName, string primaryKeyName, object poco, object primaryKeyValue, IEnumerable<string> columns)
@@ -2000,6 +1998,9 @@ namespace PetaPoco
             if (poco == null)
                 throw new ArgumentNullException(nameof(poco));
 
+            if (columns?.Any() == false)
+                return 0;
+
             return ExecuteUpdate(tableName, primaryKeyName, poco, primaryKeyValue, columns);
         }
 
@@ -2009,19 +2010,8 @@ namespace PetaPoco
 
         /// <inheritdoc />
         public int Update(string tableName, string primaryKeyName, object poco, IEnumerable<string> columns)
-        {
-            if (string.IsNullOrEmpty(tableName))
-                throw new ArgumentNullException(nameof(tableName));
-
-            if (string.IsNullOrEmpty(primaryKeyName))
-                throw new ArgumentNullException(nameof(primaryKeyName));
-
-            if (poco == null)
-                throw new ArgumentNullException(nameof(poco));
-
-            return ExecuteUpdate(tableName, primaryKeyName, poco, null, columns);
-        }
-
+            => Update(tableName, primaryKeyName, poco, null, columns);
+        
         /// <inheritdoc />
         public int Update(object poco, IEnumerable<string> columns)
             => Update(poco, null, columns);
@@ -2039,6 +2029,9 @@ namespace PetaPoco
         {
             if (poco == null)
                 throw new ArgumentNullException(nameof(poco));
+
+            if (columns?.Any() == false)
+                return 0;
 
             var pd = PocoData.ForType(poco.GetType(), _defaultMapper);
             return ExecuteUpdate(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, poco, primaryKeyValue, columns);
@@ -2167,18 +2160,7 @@ namespace PetaPoco
 
         /// <inheritdoc />
         public Task<int> UpdateAsync(CancellationToken cancellationToken, string tableName, string primaryKeyName, object poco, object primaryKeyValue)
-        {
-            if (string.IsNullOrEmpty(tableName))
-                throw new ArgumentNullException(nameof(tableName));
-
-            if (string.IsNullOrEmpty(primaryKeyName))
-                throw new ArgumentNullException(nameof(primaryKeyName));
-
-            if (poco == null)
-                throw new ArgumentNullException(nameof(poco));
-
-            return ExecuteUpdateAsync(cancellationToken, tableName, primaryKeyName, poco, primaryKeyValue, null);
-        }
+            => UpdateAsync(cancellationToken, tableName, primaryKeyName, poco, primaryKeyValue, null);
 
         /// <inheritdoc />
         public Task<int> UpdateAsync(string tableName, string primaryKeyName, object poco, object primaryKeyValue, IEnumerable<string> columns)
@@ -2197,6 +2179,9 @@ namespace PetaPoco
             if (poco == null)
                 throw new ArgumentNullException(nameof(poco));
 
+            if (columns?.Any() == false)
+                return Task.FromResult(0);
+
             return ExecuteUpdateAsync(cancellationToken, tableName, primaryKeyName, poco, primaryKeyValue, columns);
         }
 
@@ -2214,18 +2199,7 @@ namespace PetaPoco
 
         /// <inheritdoc />
         public Task<int> UpdateAsync(CancellationToken cancellationToken, string tableName, string primaryKeyName, object poco, IEnumerable<string> columns)
-        {
-            if (string.IsNullOrEmpty(tableName))
-                throw new ArgumentNullException(nameof(tableName));
-
-            if (string.IsNullOrEmpty(primaryKeyName))
-                throw new ArgumentNullException(nameof(primaryKeyName));
-
-            if (poco == null)
-                throw new ArgumentNullException(nameof(poco));
-
-            return ExecuteUpdateAsync(cancellationToken, tableName, primaryKeyName, poco, null, columns);
-        }
+            => UpdateAsync(cancellationToken, tableName, primaryKeyName, poco, null, columns);
 
         /// <inheritdoc />
         public Task<int> UpdateAsync(object poco, IEnumerable<string> columns)
@@ -2260,6 +2234,9 @@ namespace PetaPoco
         {
             if (poco == null)
                 throw new ArgumentNullException(nameof(poco));
+
+            if (columns?.Any() == false)
+                return Task.FromResult(0);
 
             var pd = PocoData.ForType(poco.GetType(), _defaultMapper);
             return ExecuteUpdateAsync(cancellationToken, pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, poco, primaryKeyValue, columns);
