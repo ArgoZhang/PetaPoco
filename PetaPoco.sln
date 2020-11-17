@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27428.2015
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30711.63
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PetaPoco", "PetaPoco\PetaPoco.csproj", "{F6CC0E46-DEDB-401A-91B2-5CBEDE8F950B}"
 EndProject
@@ -11,9 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PetaPoco.Tests.Unit", "Peta
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CodeGen", "CodeGen", "{0ADE9D42-D89F-4CBA-A1EA-762C4C2CB5AA}"
 	ProjectSection(SolutionItems) = preProject
-		CodeGen\Database.tt = CodeGen\Database.tt
-		CodeGen\PetaPoco.Core.ttinclude = CodeGen\PetaPoco.Core.ttinclude
-		CodeGen\PetaPoco.Generator.ttinclude = CodeGen\PetaPoco.Generator.ttinclude
+		T4Templates\Database.tt = T4Templates\Database.tt
+		T4Templates\PetaPoco.Core.ttinclude = T4Templates\PetaPoco.Core.ttinclude
+		T4Templates\PetaPoco.Generator.ttinclude = T4Templates\PetaPoco.Generator.ttinclude
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Misc", "Misc", "{9C2624A8-C044-4617-B962-DCD1CE40035C}"
@@ -21,7 +21,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Misc", "Misc", "{9C2624A8-C
 		docker-compose.yml = docker-compose.yml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PetaPoco.UnitTest", "PetaPoco.UnitTest\PetaPoco.UnitTest.csproj", "{53BC80F2-A7B2-4CEA-BEBA-6DAB567D405D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PetaPoco.UnitTest", "PetaPoco.UnitTest\PetaPoco.UnitTest.csproj", "{53BC80F2-A7B2-4CEA-BEBA-6DAB567D405D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

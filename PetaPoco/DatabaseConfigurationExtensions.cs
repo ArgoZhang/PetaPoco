@@ -16,7 +16,7 @@ namespace PetaPoco
         internal const string ConnectionString = "ConnectionString";
         internal const string ProviderName = "ProviderName";
 
-#if !NETSTANDARD
+#if NET40 || NET45
         internal const string ConnectionStringName = "ConnectionStringName";
 #endif
 
@@ -33,7 +33,7 @@ namespace PetaPoco
 
         private static void SetSetting(this IDatabaseBuildConfiguration source, string key, object value)
         {
-            ((IBuildConfigurationSettings) source).SetSetting(key, value);
+            ((IBuildConfigurationSettings)source).SetSetting(key, value);
         }
 
         /// <summary>
@@ -179,7 +179,7 @@ namespace PetaPoco
             return source;
         }
 
-#if !NETSTANDARD
+#if NET40 || NET45
         /// <summary>
         ///     Adds a connection string name.
         /// </summary>

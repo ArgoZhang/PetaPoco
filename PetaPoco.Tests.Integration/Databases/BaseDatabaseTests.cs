@@ -30,20 +30,16 @@ namespace PetaPoco.Tests.Integration.Databases
         public void Construct_GivenConnection_ShouldBeValid()
         {
             var factory = DB.Provider.GetFactory();
-            using (var connection = factory.CreateConnection())
-            {
-                connection.ConnectionString = DB.ConnectionString;
-                connection.Open();
+            using var connection = factory.CreateConnection();
+            connection.ConnectionString = DB.ConnectionString;
+            connection.Open();
 
-                using (var db = new Database(connection))
-                {
-                    AfterDbCreate(db);
-                    var key = db.Insert(_note);
-                    var otherNote = db.SingleOrDefault<Note>(key);
+            using var db = new Database(connection);
+            AfterDbCreate(db);
+            var key = db.Insert(_note);
+            var otherNote = db.SingleOrDefault<Note>(key);
 
-                    _note.ShouldBe(otherNote);
-                }
-            }
+            _note.ShouldBe(otherNote);
         }
 
         [Fact]
@@ -68,14 +64,12 @@ namespace PetaPoco.Tests.Integration.Databases
             var factory = DB.Provider.GetFactory();
             var connectionString = DB.ConnectionString;
 
-            using (var db = new Database(connectionString, factory))
-            {
-                AfterDbCreate(db);
-                var key = db.Insert(_note);
-                var otherNote = db.SingleOrDefault<Note>(key);
+            using var db = new Database(connectionString, factory);
+            AfterDbCreate(db);
+            var key = db.Insert(_note);
+            var otherNote = db.SingleOrDefault<Note>(key);
 
-                _note.ShouldBe(otherNote);
-            }
+            _note.ShouldBe(otherNote);
         }
 
 #if !NETCOREAPP
@@ -85,13 +79,11 @@ namespace PetaPoco.Tests.Integration.Databases
             var connectionString = DB.ConnectionString;
             var entry = ConfigurationManager.ConnectionStrings.Cast<ConnectionStringSettings>().FirstOrDefault(c => c.ConnectionString.Equals(connectionString));
 
-            using (var db = new Database(entry.Name))
-            {
-                AfterDbCreate(db);
-                var key = db.Insert(_note);
-                var otherNote = db.SingleOrDefault<Note>(key);
-                _note.ShouldBe(otherNote);
-            }
+            using var db = new Database(entry.Name);
+            AfterDbCreate(db);
+            var key = db.Insert(_note);
+            var otherNote = db.SingleOrDefault<Note>(key);
+            _note.ShouldBe(otherNote);
         }
 #endif
 
@@ -101,14 +93,12 @@ namespace PetaPoco.Tests.Integration.Databases
             var connectionString = DB.ConnectionString;
             var provider = DB.Provider;
 
-            using (var db = new Database(connectionString, provider))
-            {
-                AfterDbCreate(db);
-                var key = db.Insert(_note);
-                var otherNote = db.SingleOrDefault<Note>(key);
+            using var db = new Database(connectionString, provider);
+            AfterDbCreate(db);
+            var key = db.Insert(_note);
+            var otherNote = db.SingleOrDefault<Note>(key);
 
-                _note.ShouldBe(otherNote);
-            }
+            _note.ShouldBe(otherNote);
         }
 
         [Fact]

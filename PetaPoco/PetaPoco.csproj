@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net40;net45;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net40;net45;netstandard2.0;net5.0</TargetFrameworks>
     <AssemblyTitle>PetaPoco</AssemblyTitle>
     <Description>A Tiny ORMish thing for your POCO's.</Description>
     <Company>Longbow</Company>
@@ -11,16 +11,15 @@
     <PackageLicense>https://gitee.com/LongbowEnterprise/PetaPoco/blob/master/LICENSE.txt</PackageLicense>
     <RepositoryUrl>https://gitee.com/LongbowEnterprise/PetaPoco</RepositoryUrl>
     <PackageTags>Peta Poco Peta-Poco PetaPoco ORM-Micro Micro-ORM ORM ormmicro MVC MVC4 MVC5 MVC6 MySql Postgres MSSQL Database DAL SQL Easy</PackageTags>
-    <PackageIconUrl>https://gitee.com/LongbowEnterprise/PetaPoco/master/Media/Logo2/PetaPocoLogo2Nuget.png</PackageIconUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageId>Longbow.PetaPoco</PackageId>
     <DefineConstants Condition="'$(TargetFramework)' != 'net40'">ASYNC</DefineConstants>
-    <Version>1.0.2</Version>
+    <Version>5.0.0</Version>
     <RepositoryType>Git</RepositoryType>
     <PackageReleaseNotes />
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' != 'netstandard2.0'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'net40' or '$(TargetFramework)' == 'net45'">
     <Reference Include="System.Configuration" />
   </ItemGroup>
 
@@ -30,9 +29,9 @@
     </None>
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.Reflection.Emit.ILGeneration" Version="4.3.0" />
-    <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0' or '$(TargetFramework)' == 'net5.0'">
+    <PackageReference Include="System.Reflection.Emit.ILGeneration" Version="4.7.0" />
+    <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
   </ItemGroup>
 
 </Project>

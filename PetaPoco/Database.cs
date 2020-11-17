@@ -11,9 +11,8 @@ using System.Threading.Tasks;
 using PetaPoco.Core;
 using PetaPoco.Internal;
 using PetaPoco.Utilities;
-#if !NETSTANDARD
+#if NET40 || NET45
 using System.Configuration;
-
 #endif
 
 namespace PetaPoco
@@ -21,7 +20,7 @@ namespace PetaPoco
     /// <inheritdoc />
     public class Database : IDatabase
     {
-#region Internal operations
+        #region Internal operations
 
         internal void DoPreExecute(IDbCommand cmd)
         {
@@ -38,9 +37,9 @@ namespace PetaPoco
             _lastArgs = cmd.Parameters.Cast<IDataParameter>().Select(parameter => parameter.Value).ToArray();
         }
 
-#endregion
+        #endregion
 
-#region Member Fields
+        #region Member Fields
 
         private IMapper _defaultMapper;
         private string _connectionString;
@@ -56,11 +55,11 @@ namespace PetaPoco
         private DbProviderFactory _factory;
         private IsolationLevel? _isolationLevel;
 
-#endregion
+        #endregion
 
-#region Constructors
+        #region Constructors
 
-#if !NETSTANDARD
+#if NET40 || NET45
         /// <summary>
         ///     Constructs an instance using the first connection string found in the app/web configuration file.
         /// </summary>
@@ -209,7 +208,7 @@ namespace PetaPoco
             if (configuration == null)
                 throw new ArgumentNullException(nameof(configuration));
 
-            var settings = (IBuildConfigurationSettings) configuration;
+            var settings = (IBuildConfigurationSettings)configuration;
 
             IMapper defaultMapper = null;
             settings.TryGetSetting<IMapper>(DatabaseConfigurationExtensions.DefaultMapper, v => defaultMapper = v);
@@ -217,7 +216,7 @@ namespace PetaPoco
             IProvider provider = null;
             IDbConnection connection = null;
             string providerName = null;
-#if !NETSTANDARD
+#if NET40 || NET45
             ConnectionStringSettings entry = null;
 #endif
 
@@ -233,7 +232,7 @@ namespace PetaPoco
             {
                 settings.TryGetSetting<string>(DatabaseConfigurationExtensions.ConnectionString, cs => _connectionString = cs);
 
-#if !NETSTANDARD
+#if NET40 || NET45
                 if (_connectionString == null)
                 {
                     string connectionStringName = null;
@@ -265,7 +264,7 @@ namespace PetaPoco
                 Initialise(provider, defaultMapper);
             else if (providerName != null)
                 Initialise(DatabaseProvider.Resolve(providerName, false, _connectionString), defaultMapper);
-#if !NETSTANDARD
+#if NET40 || NET45
             else if (entry != null)
                 InitialiseFromEntry(entry, defaultMapper);
 #endif
@@ -306,9 +305,9 @@ namespace PetaPoco
             _defaultMapper = mapper ?? new ConventionMapper();
         }
 
-#endregion
+        #endregion
 
-#region Connection Management
+        #region Connection Management
 
         /// <summary>
         ///     When set to true the first opened connection is kept alive until <see cref="CloseSharedConnection" />
@@ -382,7 +381,7 @@ namespace PetaPoco
 
                 if (_sharedConnection.State == ConnectionState.Closed)
                 {
-                    var con = _sharedConnection as DbConnection;
+                    DbConnection con = _sharedConnection as DbConnection;
                     if (con != null)
                         await con.OpenAsync(cancellationToken).ConfigureAwait(false);
                     else
@@ -436,9 +435,9 @@ namespace PetaPoco
             CloseSharedConnection();
         }
 
-#endregion
+        #endregion
 
-#region Transaction Management
+        #region Transaction Management
 
         /// <inheritdoc />
         IDbTransaction ITransactionAccessor.Transaction => _transaction;
@@ -530,9 +529,9 @@ namespace PetaPoco
                 CleanupTransaction();
         }
 
-#endregion
+        #endregion
 
-#region Command Management
+        #region Command Management
 
         /// <summary>
         ///     Add a parameter to a DB command
@@ -589,7 +588,7 @@ namespace PetaPoco
                 var t = value.GetType();
                 if (t.IsEnum) // PostgreSQL .NET driver wont cast enum to int
                 {
-                    p.Value = Convert.ChangeType(value, ((Enum) value).GetTypeCode());
+                    p.Value = Convert.ChangeType(value, ((Enum)value).GetTypeCode());
                 }
                 else if (t == typeof(Guid) && !_provider.HasNativeGuidSupport)
                 {
@@ -680,9 +679,9 @@ namespace PetaPoco
             return cmd;
         }
 
-#endregion
+        #endregion
 
-#region Exception Reporting and Logging
+        #region Exception Reporting and Logging
 
         /// <summary>
         ///     Called if an exception occurs during processing of a DB operation.  Override to provide custom logging/handling.
@@ -746,9 +745,9 @@ namespace PetaPoco
             CommandExecuted?.Invoke(this, new DbCommandEventArgs(cmd));
         }
 
-#endregion
+        #endregion
 
-#region operation: Execute
+        #region operation: Execute
 
         /// <inheritdoc />
         public int Execute(string sql, params object[] args)
@@ -765,10 +764,8 @@ namespace PetaPoco
                 OpenSharedConnection();
                 try
                 {
-                    using (var cmd = CreateCommand(_sharedConnection, commandType, sql, args))
-                    {
-                        return ExecuteNonQueryHelper(cmd);
-                    }
+                    using var cmd = CreateCommand(_sharedConnection, commandType, sql, args);
+                    return ExecuteNonQueryHelper(cmd);
                 }
                 finally
                 {
@@ -804,10 +801,8 @@ namespace PetaPoco
                 await OpenSharedConnectionAsync(cancellationToken).ConfigureAwait(false);
                 try
                 {
-                    using (var cmd = CreateCommand(_sharedConnection, commandType, sql, args))
-                    {
-                        return await ExecuteNonQueryHelperAsync(cancellationToken, cmd).ConfigureAwait(false);
-                    }
+                    using var cmd = CreateCommand(_sharedConnection, commandType, sql, args);
+                    return await ExecuteNonQueryHelperAsync(cancellationToken, cmd).ConfigureAwait(false);
                 }
                 finally
                 {
@@ -824,9 +819,9 @@ namespace PetaPoco
 
 #endif
 
-#endregion
+        #endregion
 
-#region operation: ExecuteScalar
+        #region operation: ExecuteScalar
 
         /// <inheritdoc />
         public T ExecuteScalar<T>(string sql, params object[] args)
@@ -843,17 +838,15 @@ namespace PetaPoco
                 OpenSharedConnection();
                 try
                 {
-                    using (var cmd = CreateCommand(_sharedConnection, commandType, sql, args))
-                    {
-                        var val = ExecuteScalarHelper(cmd);
+                    using var cmd = CreateCommand(_sharedConnection, commandType, sql, args);
+                    var val = ExecuteScalarHelper(cmd);
 
-                        // Handle nullable types
-                        var u = Nullable.GetUnderlyingType(typeof(T));
-                        if (u != null && (val == null || val == DBNull.Value))
-                            return default(T);
+                    // Handle nullable types
+                    var u = Nullable.GetUnderlyingType(typeof(T));
+                    if (u != null && (val == null || val == DBNull.Value))
+                        return default;
 
-                        return (T) Convert.ChangeType(val, u == null ? typeof(T) : u);
-                    }
+                    return (T)Convert.ChangeType(val, u == null ? typeof(T) : u);
                 }
                 finally
                 {
@@ -902,7 +895,7 @@ namespace PetaPoco
                         if (u != null && (val == null || val == DBNull.Value))
                             return default(T);
 
-                        return (T) Convert.ChangeType(val, u == null ? typeof(T) : u);
+                        return (T)Convert.ChangeType(val, u == null ? typeof(T) : u);
                     }
                 }
                 finally
@@ -920,9 +913,9 @@ namespace PetaPoco
 
 #endif
 
-#endregion
+        #endregion
 
-#region operation: Fetch
+        #region operation: Fetch
 
         /// <inheritdoc />
         public List<T> Fetch<T>()
@@ -1027,9 +1020,9 @@ namespace PetaPoco
 
 #endif
 
-#endregion
+        #endregion
 
-#region operation: Page
+        #region operation: Page
 
         /// <summary>
         ///     Starting with a regular SELECT statement, derives the SQL statements required to query a
@@ -1047,8 +1040,7 @@ namespace PetaPoco
             if (EnableAutoSelect)
                 sql = AutoSelectHelper.AddSelectClause<T>(_provider, sql, _defaultMapper);
 
-            SQLParts parts;
-            if (!Provider.PagingUtility.SplitSQL(sql, out parts))
+            if (!Provider.PagingUtility.SplitSQL(sql, out SQLParts parts))
                 throw new Exception("Unable to parse SQL statement for paged query");
 
             sqlPage = _provider.BuildPageQuery(skip, take, parts, ref args);
@@ -1166,9 +1158,9 @@ namespace PetaPoco
 
 #endif
 
-#endregion
+        #endregion
 
-#region operation: SkipTake
+        #region operation: SkipTake
 
         /// <inheritdoc />
         public List<T> SkipTake<T>(long skip, long take)
@@ -1181,7 +1173,7 @@ namespace PetaPoco
         /// <inheritdoc />
         public List<T> SkipTake<T>(long skip, long take, string sql, params object[] args)
         {
-            BuildPageQueries<T>(skip, take, sql, ref args, out var sqlCount, out var sqlPage);
+            BuildPageQueries<T>(skip, take, sql, ref args, out _, out var sqlPage);
             return Fetch<T>(sqlPage, args);
         }
 
@@ -1216,9 +1208,9 @@ namespace PetaPoco
 
 #endif
 
-#endregion
+        #endregion
 
-#region operation: Query
+        #region operation: Query
 
         /// <inheritdoc />
         public IEnumerable<T> Query<T>()
@@ -1353,7 +1345,7 @@ namespace PetaPoco
                 {
                     IDataReader reader;
                     var pd = PocoData.ForType(typeof(T), _defaultMapper);
-                    
+
                     try
                     {
                         reader = await ExecuteReaderHelperAsync(cancellationToken, cmd).ConfigureAwait(false);
@@ -1495,9 +1487,9 @@ namespace PetaPoco
             }
         }
 
-#endregion
+        #endregion
 
-#region operation: Exists
+        #region operation: Exists
 
         /// <inheritdoc />
         public bool Exists<T>(string sqlCondition, params object[] args)
@@ -1544,9 +1536,9 @@ namespace PetaPoco
         }
 #endif
 
-#endregion
+        #endregion
 
-#region operation: Linq style (Exists, Single, SingleOrDefault etc...)
+        #region operation: Linq style (Exists, Single, SingleOrDefault etc...)
 
         /// <inheritdoc />
         public T Single<T>(object primaryKey)
@@ -1684,9 +1676,9 @@ namespace PetaPoco
             return new Sql(sql, primaryKey);
         }
 
-#endregion
+        #endregion
 
-#region operation: Insert
+        #region operation: Insert
 
         /// <inheritdoc />
         public object Insert(string tableName, object poco)
@@ -1754,33 +1746,31 @@ namespace PetaPoco
                 OpenSharedConnection();
                 try
                 {
-                    using (var cmd = CreateCommand(_sharedConnection, string.Empty))
+                    using var cmd = CreateCommand(_sharedConnection, string.Empty);
+                    var pd = PocoData.ForObject(poco, primaryKeyName, _defaultMapper);
+                    var names = new List<string>();
+                    var values = new List<string>();
+
+                    PrepareExecuteInsert(tableName, primaryKeyName, autoIncrement, poco, pd, names, values, cmd);
+
+                    if (!autoIncrement)
                     {
-                        var pd = PocoData.ForObject(poco, primaryKeyName, _defaultMapper);
-                        var names = new List<string>();
-                        var values = new List<string>();
+                        ExecuteNonQueryHelper(cmd);
 
-                        PrepareExecuteInsert(tableName, primaryKeyName, autoIncrement, poco, pd, names, values, cmd);
-
-                        if (!autoIncrement)
-                        {
-                            ExecuteNonQueryHelper(cmd);
-
-                            if (primaryKeyName != null && pd.Columns.TryGetValue(primaryKeyName, out var pkColumn))
-                                return pkColumn.GetValue(poco);
-                            else
-                                return null;
-                        }
-
-                        var id = _provider.ExecuteInsert(this, cmd, primaryKeyName);
-
-                        // Assign the ID back to the primary key property
-                        if (primaryKeyName != null && !poco.GetType().Name.Contains("AnonymousType"))
-                            if (pd.Columns.TryGetValue(primaryKeyName, out var pc))
-                                pc.SetValue(poco, pc.ChangeType(id));
-
-                        return id;
+                        if (primaryKeyName != null && pd.Columns.TryGetValue(primaryKeyName, out var pkColumn))
+                            return pkColumn.GetValue(poco);
+                        else
+                            return null;
                     }
+
+                    var id = _provider.ExecuteInsert(this, cmd, primaryKeyName);
+
+                    // Assign the ID back to the primary key property
+                    if (primaryKeyName != null && !poco.GetType().Name.Contains("AnonymousType"))
+                        if (pd.Columns.TryGetValue(primaryKeyName, out var pc))
+                            pc.SetValue(poco, pc.ChangeType(id));
+
+                    return id;
                 }
                 finally
                 {
@@ -1979,7 +1969,7 @@ namespace PetaPoco
         /// <inheritdoc />
         public int Update(string tableName, string primaryKeyName, object poco, IEnumerable<string> columns)
             => Update(tableName, primaryKeyName, poco, null, columns);
-        
+
         /// <inheritdoc />
         public int Update(object poco, IEnumerable<string> columns)
             => Update(poco, null, columns);
@@ -2264,9 +2254,9 @@ namespace PetaPoco
 
 #endif
 
-#endregion
+        #endregion
 
-#region operation: Delete
+        #region operation: Delete
 
         /// <inheritdoc />
         public int Delete(string tableName, string primaryKeyName, object poco)
@@ -2416,9 +2406,9 @@ namespace PetaPoco
 
 #endif
 
-#endregion
+        #endregion
 
-#region operation: IsNew
+        #region operation: IsNew
 
         /// <inheritdoc />
         public bool IsNew(string primaryKeyName, object poco)
@@ -2472,29 +2462,29 @@ namespace PetaPoco
             if (!pi.PropertyType.IsValueType)
                 return pk == null;
             if (type == typeof(long))
-                return (long) pk == default(long);
+                return (long)pk == default(long);
             if (type == typeof(int))
-                return (int) pk == default(int);
+                return (int)pk == default(int);
             if (type == typeof(Guid))
-                return (Guid) pk == default(Guid);
+                return (Guid)pk == default(Guid);
             if (type == typeof(ulong))
-                return (ulong) pk == default(ulong);
+                return (ulong)pk == default(ulong);
             if (type == typeof(uint))
-                return (uint) pk == default(uint);
+                return (uint)pk == default(uint);
             if (type == typeof(short))
-                return (short) pk == default(short);
+                return (short)pk == default(short);
             if (type == typeof(ushort))
-                return (ushort) pk == default(ushort);
+                return (ushort)pk == default(ushort);
             if (type == typeof(decimal))
-                return (decimal) pk == default(decimal);
+                return (decimal)pk == default(decimal);
 
             // Create a default instance and compare
             return pk == Activator.CreateInstance(pk.GetType());
         }
 
-#endregion
+        #endregion
 
-#region operation: Save
+        #region operation: Save
 
         /// <inheritdoc />
         public void Save(string tableName, string primaryKeyName, object poco)
@@ -2540,9 +2530,9 @@ namespace PetaPoco
 
 #endif
 
-#endregion
+        #endregion
 
-#region operation: Multi-Poco Query/Fetch
+        #region operation: Multi-Poco Query/Fetch
 
         /// <inheritdoc />
         public List<TRet> Fetch<T1, T2, TRet>(Func<T1, T2, TRet> cb, string sql, params object[] args)
@@ -2719,7 +2709,7 @@ namespace PetaPoco
 
                         if (bNeedTerminator)
                         {
-                            var poco = (TRet) (cb as Delegate).DynamicInvoke(new object[types.Length]);
+                            var poco = (TRet)(cb as Delegate).DynamicInvoke(new object[types.Length]);
                             if (poco != null)
                                 yield return poco;
                             else
@@ -2734,9 +2724,9 @@ namespace PetaPoco
             }
         }
 
-#endregion
+        #endregion
 
-#region operation: Multi-Result Set
+        #region operation: Multi-Result Set
 
         public IGridReader QueryMultiple(Sql sql)
             => QueryMultiple(sql.SQL, sql.Arguments);
@@ -2763,9 +2753,9 @@ namespace PetaPoco
             return result;
         }
 
-#endregion
+        #endregion
 
-#region operation: StoredProc
+        #region operation: StoredProc
 
         /// <inheritdoc />
         public IEnumerable<T> QueryProc<T>(string storedProcedureName, params object[] args)
@@ -2829,9 +2819,9 @@ namespace PetaPoco
             => ExecuteInternalAsync(cancellationToken, CommandType.StoredProcedure, storedProcedureName, args);
 #endif
 
-#endregion
+        #endregion
 
-#region Last Command
+        #region Last Command
 
         /// <summary>
         ///     Retrieves the SQL of the last executed statement
@@ -2848,9 +2838,9 @@ namespace PetaPoco
         /// </summary>
         public string LastCommand => FormatCommand(_lastSql, _lastArgs);
 
-#endregion
+        #endregion
 
-#region FormatCommand
+        #region FormatCommand
 
         /// <summary>
         ///     Formats the contents of a DB command for display
@@ -2888,9 +2878,9 @@ namespace PetaPoco
             return sb.ToString();
         }
 
-#endregion
+        #endregion
 
-#region Public Properties
+        #region Public Properties
 
         /// <summary>
         ///     Gets the default mapper.
@@ -2971,7 +2961,7 @@ namespace PetaPoco
         }
 
         private object CommandHelper(IDbCommand cmd, Func<IDbCommand, object> cmdFunc)
-        {            
+        {
             DoPreExecute(cmd);
             var result = cmdFunc(cmd);
             OnExecutedCommand(cmd);
@@ -2983,7 +2973,7 @@ namespace PetaPoco
         {
             if (cmd is DbCommand dbCommand)
             {
-                var task = CommandHelper(cancellationToken, dbCommand, 
+                var task = CommandHelper(cancellationToken, dbCommand,
                     async (t, c) => await c.ExecuteReaderAsync(t).ConfigureAwait(false));
                 return (IDataReader)await task.ConfigureAwait(false);
             }
@@ -2995,7 +2985,7 @@ namespace PetaPoco
         {
             if (cmd is DbCommand dbCommand)
             {
-                var task = CommandHelper(cancellationToken, dbCommand, 
+                var task = CommandHelper(cancellationToken, dbCommand,
                     async (t, c) => await c.ExecuteNonQueryAsync(t).ConfigureAwait(false));
                 return (int)await task.ConfigureAwait(false);
             }
@@ -3006,19 +2996,19 @@ namespace PetaPoco
         internal protected Task<object> ExecuteScalarHelperAsync(CancellationToken cancellationToken, IDbCommand cmd)
         {
             if (cmd is DbCommand dbCommand)
-                return CommandHelper(cancellationToken, dbCommand, 
-                    async (t, c) => await c.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false));                
+                return CommandHelper(cancellationToken, dbCommand,
+                    async (t, c) => await c.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false));
             else
                 return Task.FromResult(ExecuteScalarHelper(cmd));
         }
 
-        private async Task<object> CommandHelper(CancellationToken cancellationToken, DbCommand cmd, 
+        private async Task<object> CommandHelper(CancellationToken cancellationToken, DbCommand cmd,
             Func<CancellationToken, DbCommand, Task<object>> cmdFunc)
         {
             DoPreExecute(cmd);
             var result = await cmdFunc(cancellationToken, cmd).ConfigureAwait(false);
             OnExecutedCommand(cmd);
-            return result;            
+            return result;
         }
 #endif
         #endregion
@@ -3060,7 +3050,7 @@ namespace PetaPoco
         /// </summary>
         public event EventHandler<ExceptionEventArgs> ExceptionThrown;
 
-#endregion
+        #endregion
     }
 
     public class Database<TDatabaseProvider> : Database where TDatabaseProvider : IProvider
