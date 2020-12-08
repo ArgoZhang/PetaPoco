@@ -14,7 +14,7 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageId>Longbow.PetaPoco</PackageId>
     <DefineConstants Condition="'$(TargetFramework)' != 'net40'">ASYNC</DefineConstants>
-    <Version>5.0.0</Version>
+    <Version>5.0.1</Version>
     <RepositoryType>Git</RepositoryType>
     <PackageReleaseNotes />
   </PropertyGroup>
