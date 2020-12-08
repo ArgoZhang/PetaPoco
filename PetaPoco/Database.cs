@@ -631,6 +631,11 @@ namespace PetaPoco
                     p.GetType().GetProperty("UdtTypeName").SetValue(p, "geometry", null); //geography is the equivalent SQL Server Type
                     p.Value = value;
                 }
+                else if (t == typeof(byte[]))
+                {
+                    p.Value = value;
+                    p.DbType = DbType.Binary;
+                }
                 else
                 {
                     p.Value = value;
