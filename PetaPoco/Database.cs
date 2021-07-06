@@ -1363,9 +1363,8 @@ namespace PetaPoco
                     }
 
                     var readerAsync = reader as DbDataReader;
-                    var factory =
-                        pd.GetFactory(cmd.CommandText, _sharedConnection.ConnectionString, 0, reader.FieldCount, reader,
-                            _defaultMapper) as Func<IDataReader, T>;
+                    var factory = pd.PocoFactory<T>(cmd.CommandText, _sharedConnection.ConnectionString, 0, reader.FieldCount, reader,
+                        _defaultMapper) as Func<IDataReader, T>;
 
                     using (reader)
                     {
@@ -1433,8 +1432,8 @@ namespace PetaPoco
                 return AsyncReader<T>.Empty();
             }
 
-            var factory =
-                pd.GetFactory(cmd.CommandText, _sharedConnection.ConnectionString, 0, reader.FieldCount, reader, _defaultMapper) as Func<IDataReader, T>;
+            var factory = pd.PocoFactory<T>(cmd.CommandText, _sharedConnection.ConnectionString, 0, reader.FieldCount, reader,
+                _defaultMapper) as Func<IDataReader, T>;
 
             return new AsyncReader<T>(this, cmd, reader, factory);
         }
@@ -1461,7 +1460,7 @@ namespace PetaPoco
                         yield break;
                     }
 
-                    var factory = pd.GetFactory(cmd.CommandText, _sharedConnection.ConnectionString, 0, r.FieldCount, r,
+                    var factory = pd.PocoFactory<T>(cmd.CommandText, _sharedConnection.ConnectionString, 0, r.FieldCount, r,
                         _defaultMapper) as Func<IDataReader, T>;
                     using (r)
                     {
