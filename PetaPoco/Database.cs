@@ -721,7 +721,7 @@ namespace PetaPoco
         public IDbCommand CreateCommand(IDbConnection connection, CommandType commandType, string sql, params object[] args)
         {
             var cmd = connection.CreateCommand();
-            
+
             try
             {
                 cmd.Connection = connection;
@@ -760,8 +760,8 @@ namespace PetaPoco
             }
             catch
             {
-             cmd.Dispose();
-             throw;
+                cmd.Dispose();
+                throw;
             }
         }
 
