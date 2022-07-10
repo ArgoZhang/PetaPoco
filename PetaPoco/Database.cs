@@ -724,7 +724,6 @@ namespace PetaPoco
 
             try
             {
-                cmd.Connection = connection;
                 cmd.CommandType = commandType;
                 cmd.Transaction = _transaction;
 
