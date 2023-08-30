@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Data;
 using System.Data.Common;
@@ -192,6 +192,9 @@ namespace PetaPoco.Core
             if (typeName.StartsWith("FbConnection") || typeName.EndsWith("FirebirdClientFactory"))
                 return Singleton<FirebirdDbDatabaseProvider>.Instance;
 
+            if (typeName.StartsWith("Dm"))
+                return Singleton<DmDatabaseProvider>.Instance;
+
             if (typeName.IndexOf("OleDb", StringComparison.InvariantCultureIgnoreCase) >= 0 &&
                 (connectionString.IndexOf("Jet.OLEDB", StringComparison.InvariantCultureIgnoreCase) > 0 ||
                  connectionString.IndexOf("ACE.OLEDB", StringComparison.InvariantCultureIgnoreCase) > 0))
@@ -255,7 +258,10 @@ namespace PetaPoco.Core
             if (providerName.IndexOf("Firebird", StringComparison.InvariantCultureIgnoreCase) >= 0 ||
                 providerName.IndexOf("FbConnection", StringComparison.InvariantCultureIgnoreCase) >= 0)
                 return Singleton<FirebirdDbDatabaseProvider>.Instance;
-
+            
+            if (providerName.StartsWith("Dm"))
+                return Singleton<DmDatabaseProvider>.Instance;
+                
             if (providerName.IndexOf("OleDb", StringComparison.InvariantCultureIgnoreCase) >= 0 &&
                 (connectionString.IndexOf("Jet.OLEDB", StringComparison.InvariantCultureIgnoreCase) > 0 ||
                  connectionString.IndexOf("ACE.OLEDB", StringComparison.InvariantCultureIgnoreCase) > 0))
